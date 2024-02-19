@@ -27,7 +27,19 @@ int main() {
   std::cout << "OpenMP multithreading not enabled, using " << Eigen::nbThreads()
             << " cores" << '\n';
 #endif
-  int test = run_3body_test();
+  double noise_level;
+
+  // Prompt the user to enter a double value
+  std::cout << "Please enter a double value as the noise level: ";
+  while (!(std::cin >> noise_level)) {
+        // If the input is not a double, clear the error flag
+        std::cin.clear();
+        // Ignore the invalid input in the buffer
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        // Prompt the user again
+        std::cout << "Invalid input. Please enter a valid double value: ";
+    }
+  int test = run_3body_test(noise_level);
   exit(2);
   return (0);
 }

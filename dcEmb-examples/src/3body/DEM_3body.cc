@@ -21,13 +21,14 @@
 #include "country_data.hh"
 #include "dynamic_3body_model.hh"
 #include "utility.hh"
+#include <random>
 
 /**
  * Run the 3body example
  */
-int run_3body_test() {
+int run_3body_test(double noise_level) {
   dynamic_3body_model model;
-  model.prior_parameter_expectations = default_prior_expectations();
+  model.prior_parameter_expectations = default_prior_expectations(noise_level);
   model.prior_parameter_covariances = default_prior_covariances();
   model.prior_hyper_expectations = default_hyper_expectations();
   model.prior_hyper_covariances = default_hyper_covariances();
@@ -36,7 +37,7 @@ int run_3body_test() {
   model.num_response_vars = 3;
 
   Eigen::MatrixXd out1 =
-      model.eval_generative(true_prior_expectations(),
+      model.eval_generative(true_prior_expectations(noise_level), 
                             model.parameter_locations, model.num_samples, 3, 1);
   utility::print_matrix("../visualisation/true_generative.csv", out1);
   Eigen::MatrixXd response_vars =
@@ -55,7 +56,7 @@ int run_3body_test() {
                             model.parameter_locations, model.num_samples, 3, 1);
   utility::print_matrix("../visualisation/deriv_generative.csv", out2);
   Eigen::MatrixXd out3 =
-      model.eval_generative(default_prior_expectations(),
+      model.eval_generative(default_prior_expectations(noise_level),
                             model.parameter_locations, model.num_samples, 3, 1);
   utility::print_matrix("../visualisation/org_generative.csv", out3);
 
@@ -72,43 +73,54 @@ int run_3body_test() {
 /**
  * "True" values that generate a stable system
  */
-Eigen::VectorXd true_prior_expectations() {
-  Eigen::MatrixXd default_prior_expectation = Eigen::MatrixXd::Zero(7, 3);
-  default_prior_expectation.row(0) << 1, 1, 1;
-  default_prior_expectation.row(1) << 0.97000436, -0.97000436, 0;
-  default_prior_expectation.row(2) << -0.24308753, 0.24308753, 0;
-  default_prior_expectation.row(3) << 0, 0, 0;
-  default_prior_expectation.row(4) << 0.93240737 / 2, 0.93240737 / 2,
-      -0.93240737;
-  default_prior_expectation.row(5) << 0.86473146 / 2, 0.86473146 / 2,
-      -0.86473146;
-  default_prior_expectation.row(6) << 0, 0, 0;
-  Eigen::Map<Eigen::VectorXd> return_default_prior_expectation(
+
+
+Eigen::VectorXd true_prior_expectations(double noise_level) {
+    Eigen::MatrixXd default_prior_expectation = Eigen::MatrixXd::Zero(7, 3);
+    default_prior_expectation.row(0) << 1, 1, 1;
+    default_prior_expectation.row(1) << 0.97000436, -0.97000436, 0;
+    default_prior_expectation.row(2) << -0.24308753, 0.24308753, 0;
+    default_prior_expectation.row(3) << 0, 0, 0;
+    default_prior_expectation.row(4) << 0.93240737 / 2, 0.93240737 / 2,
+        -0.93240737;
+    default_prior_expectation.row(5) << 0.86473146 / 2, 0.86473146 / 2,
+        -0.86473146;
+    default_prior_expectation.row(6) << 0, 0, 0;
+     Eigen::Map<Eigen::VectorXd> return_default_prior_expectation(
       default_prior_expectation.data(),
       default_prior_expectation.rows() * default_prior_expectation.cols());
   return return_default_prior_expectation;
 }
 
+
 /**
  * Prior expectations on position
  */
-Eigen::VectorXd default_prior_expectations() {
-  Eigen::MatrixXd default_prior_expectation = Eigen::MatrixXd::Zero(7, 3);
-  double x =  0.04;
-  default_prior_expectation.row(0) << 1 - x, 1 + x, 1 + x;
-  default_prior_expectation.row(1) << 0.97000436 + x, -0.97000436 - x, 0 + x;
-  default_prior_expectation.row(2) << -0.24308753 + x, 0.24308753 + x, 0 - x;
-  default_prior_expectation.row(3) << 0 + x, 0 + x, 0 - x;
-  default_prior_expectation.row(4) << 0.93240737 / 2  + x, 0.93240737 / 2 - x,
-      -0.93240737 + x;
-  default_prior_expectation.row(5) << 0.86473146 / 2  + x, 0.86473146 / 2 - x,
-      -0.86473146 - x;
-  default_prior_expectation.row(6) << 0 + x, 0 - x, 0 + x;
-  Eigen::Map<Eigen::VectorXd> return_default_prior_expectation(
+#include <random>
+
+Eigen::VectorXd default_prior_expectations(double noise_level) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<double> dis(-noise_level, noise_level);
+
+    Eigen::MatrixXd default_prior_expectation = Eigen::MatrixXd::Zero(7, 3);
+    double noise[6];
+    double guess = dis(gen);
+    for(int i=0; i<6; i++) noise[i] = dis(gen); 
+    default_prior_expectation.row(0) << 1 - noise[0], 1 + noise[0], 1 + noise[0];
+    default_prior_expectation.row(1) << 0.97000436 + noise[1], -0.97000436 - noise[1], noise[1];
+    default_prior_expectation.row(2) << -0.24308753 + noise[2], 0.24308753 + noise[2], -noise[2];
+    default_prior_expectation.row(3) << noise[3], noise[3], -noise[3];
+    default_prior_expectation.row(4) << 0.93240737 / 2  + noise[4], 0.93240737 / 2 - noise[4], -0.93240737 + noise[4];
+    default_prior_expectation.row(5) << 0.86473146 / 2  + noise[5], 0.86473146 / 2 - noise[5], -0.86473146 - noise[5];
+    default_prior_expectation.row(6) << noise[6], -noise[6], noise[6];
+
+    Eigen::Map<Eigen::VectorXd> return_default_prior_expectation(
       default_prior_expectation.data(),
       default_prior_expectation.rows() * default_prior_expectation.cols());
-  return return_default_prior_expectation;
+    return return_default_prior_expectation;
 }
+
 
 /**
  * Prior covariance matrix

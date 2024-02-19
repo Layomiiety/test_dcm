@@ -36,6 +36,7 @@ def update(num, data_true, data_deriv, data_org,
     dot9.set_data(data_org[15, num], data_org[16, num])
     return dot1, dot2, dot3, dot4, dot5, dot6, dot7, dot8, dot9
 
+
 df_true=pd.read_csv('true_generative.csv', sep=',',header=None)
 df_deriv=pd.read_csv('deriv_generative.csv', sep=',',header=None)
 df_org=pd.read_csv('org_generative.csv', sep=',',header=None)
@@ -47,13 +48,13 @@ data_deriv = df_deriv.values[0::skip].T
 data_org = df_org.values[0::skip].T
 
 line1, = ax.plot(data_true[1, 0:], data_true[2, 0:], '-', color='#e0e0e0')
-dot1, = ax.plot(data_true[1, 0:1], data_true[2, 0:1], 'o', color='#b71c1c')
-dot2, = ax.plot(data_true[8, 0:1], data_true[9, 0:1], 'o', color='#1b5e20')
-dot3, = ax.plot(data_true[15, 0:1], data_true[16, 0:1], 'o', color='#0d47a1')
+dot1, = ax.plot(data_true[1, 0:1], data_true[2, 0:1], 's', color='#b71c1c')
+dot2, = ax.plot(data_true[8, 0:1], data_true[9, 0:1], 's', color='#1b5e20')
+dot3, = ax.plot(data_true[15, 0:1], data_true[16, 0:1], 's', color='#0d47a1')
 
-dot4, = ax.plot(data_deriv[1, 0:1], data_deriv[2, 0:1], 'o', color='#e53935')
-dot5, = ax.plot(data_deriv[8, 0:1], data_deriv[9, 0:1], 'o', color='#43a047')
-dot6, = ax.plot(data_deriv[15, 0:1], data_deriv[16, 0:1], 'o', color='#1e88e5')
+dot4, = ax.plot(data_deriv[1, 0:1], data_deriv[2, 0:1], '^', color='#e53935')
+dot5, = ax.plot(data_deriv[8, 0:1], data_deriv[9, 0:1], '^', color='#43a047')
+dot6, = ax.plot(data_deriv[15, 0:1], data_deriv[16, 0:1], '^', color='#1e88e5')
 
 dot7, = ax.plot(data_org[1, 0:1], data_org[2, 0:1], 'o', color='#e57373')
 dot8, = ax.plot(data_org[8, 0:1], data_org[9, 0:1], 'o', color='#81c784')

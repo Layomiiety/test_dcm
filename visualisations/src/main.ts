@@ -8,15 +8,23 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 
+
 const trailLength = 20;
 const trailOpacity = 0.5;
 const particleSystems = [];
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8); // Set the size of the renderer to half the size of the window, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio * 4); // Increase renderer pixel ratio
 renderer.setClearColor(0xFFFFFF);
 document.body.appendChild(renderer.domElement);
+
+const gridSize = 20; // Size of the grid
+const gridDivisions = 10; // Number of divisions
+const gridHelper = new THREE.GridHelper(gridSize, gridDivisions);
+scene.add(gridHelper);
+const axesHelper = new THREE.AxesHelper(20); // Adjust the size of the axes as needed
+scene.add(axesHelper);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 // Enable damping for smooth camera movement

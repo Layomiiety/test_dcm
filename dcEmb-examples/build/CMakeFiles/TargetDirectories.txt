@@ -1,8 +1,0 @@
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/doxy.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/sphinx.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/docs.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/dcm_covid.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/dcm_3body.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/dcm_weather.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/hanke/OneDrive/Desktop/create with code/project/dcEmb-examples/build/CMakeFiles/rebuild_cache.dir

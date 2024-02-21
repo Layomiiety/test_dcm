@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -std=c++14 -O3 -ffast-math -fno-unsafe-math-optimizations -flto -march=native -D_GLIBCXX_PARALLEL -O3 -shared -Wl,-soname,libdcEmb.so.1 -o libdcEmb.so.1.0.1 CMakeFiles/dcEmb.dir/src/dynamic_model.cc.o CMakeFiles/dcEmb.dir/src/utility.cc.o  /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.a 

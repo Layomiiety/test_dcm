@@ -18,8 +18,8 @@ renderer.setSize(window.innerWidth * 0.8, window.innerHeight * 0.8); // Set the 
 renderer.setPixelRatio(window.devicePixelRatio * 4); // Increase renderer pixel ratio
 renderer.setClearColor(0xFFFFFF);
 // document.body
-document.getElementById("test-div").appendChild(renderer.domElement);
-
+var spheres_div = document.getElementById("spheres_div");
+spheres_div.appendChild(renderer.domElement);
 const gridSize = 20; // Size of the grid
 const gridDivisions = 10; // Number of divisions
 const gridHelper = new THREE.GridHelper(gridSize, gridDivisions);
@@ -81,9 +81,9 @@ import * as data7 from './3body/0.07/deriv_generative.json';
 
 const jsonData = [data0, data1, data2, data3, data4, data5, data6, data7];
 
-const columnNames = Object.keys(jsonData[0]);
+// const columnNames = Object.keys(jsonData[0]);
 
-console.log('names:' + columnNames);
+// console.log('names:' + columnNames);
 
 const data_length = jsonData[0].planet_coordsX_A.length;
 console.log('datalength:' + data_length);
@@ -146,6 +146,7 @@ document.addEventListener('keydown', function(event) {
 function createSphere(materialIndex) {
   const material = new THREE.MeshBasicMaterial({color: materialColors[materialIndex]})
   const sphere = new THREE.Mesh(geometry, material);
+  sphere.name = 'sphere' + `${materialIndex}`;
   scene.add(sphere);
   spheres.push(sphere)
 }
@@ -190,14 +191,13 @@ document.addEventListener('keypress', (event) => {
   // Get the key pressed
   const key = event.key;
 
-  // Check if the pressed key is a number between 1 and 9
+  // Check if the pressed key is a number between 0 and 7
   if (key >= '0' && key <= '7') {
     // Calculate the index of the first sphere associated with the pressed key
     const index = parseInt(key) * 3;
 
     // Toggle the visibility of the spheres associated with the pressed key
     for (let i = index; i < index + 3; i++) {
-      // Toggle visibility by setting the material's opacity
       const sphere_on = spheres_on[i];
       if(sphere_on == 1){
         spheres_on[i] = 0;
@@ -215,9 +215,59 @@ document.addEventListener('keypress', (event) => {
     console.log("detected" + key);  
   }
 });
+
+//highlighting spheres when clicked on
+const spheres_highlight = [];
+for(let i = 0; i < numFiles * 3; i++) spheres_highlight.push(0);
+document.addEventListener('mousemove', function(event) {
+  // Get the mouse position relative to the renderer's DOM element
+  var rect = renderer.domElement.getBoundingClientRect();
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
+  // Convert mouse coordinates to normalized device coordinates (NDC)
+  var mouseNDC = new THREE.Vector2();
+  mouseNDC.x = (mouseX / rect.width) * 2 - 1;
+  mouseNDC.y = -(mouseY / rect.height) * 2 + 1;
+  var raycaster = new THREE.Raycaster();
+
+  // Perform raycasting from the camera to the mouse position
+  raycaster.setFromCamera(mouseNDC, camera);
+
+  // Check for intersections with objects in the scene
+  var intersects = raycaster.intersectObjects(spheres);
+
+  // If there are intersections, highlight the first object
+  for(let i = 0; i < intersects.length; i++){
+    var sphere_detected = intersects[i].object;
+    var sphere_id = parseInt(sphere_detected.name.substring(6));
+    if(spheres_on[sphere_id] == 1){
+      if(spheres_highlight[sphere_id] == 0){
+        console.log('highlight ' + sphere_id);
+        sphere_detected.material.color.set(Math.random() * 0xffffff);
+        sphere_detected.scale.set(2, 2, 2);
+        spheres_highlight[sphere_id] = 1;
+      }
+      else {
+        console.log('dehighlight ' + sphere_id);
+        sphere_detected.material.color.set(materialColors[sphere_id]);
+        sphere_detected.scale.set(1, 1, 1);
+        spheres_highlight[sphere_id] = 0;
+      }
+      break;
+    }
+  }
+});
 const animate = () => {
   requestAnimationFrame(animate);
+  // var intersects = raycaster.intersectObject(scene, true);
 
+  // if (intersects.length > 0) {
+    
+  //     var object = intersects[0].object;
+
+  //     object.material.color.set( Math.random() * 0xffffff );
+
+  // }
     // Move sphere towards the current coordinates
   if(!isPaused){
       for (let i = 0; i < numFiles; i++) {
